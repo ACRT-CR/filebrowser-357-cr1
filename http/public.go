@@ -41,6 +41,11 @@ var withHashFile = func(fn handleFunc) handleFunc {
 			// set fs root to the shared folder
 			d.user.Fs = afero.NewBasePathFs(d.user.Fs, filepath.Dir(link.Path))
 
+			// The filesystem is now rebased, so resolve rule-checker paths
+			// back to the user's original scope so deny rules below the
+			// share root keep applying.
+			d.checkerPrefix = filepath.Dir(link.Path)
+
 			file, err = files.NewFileInfo(files.FileOptions{
 				Fs:      d.user.Fs,
 				Path:    path,
